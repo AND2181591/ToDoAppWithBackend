@@ -4,11 +4,12 @@ import { RouterOutlet } from '@angular/router';
 import { ToDoItem } from './interfaces/to-do-item';
 import { ToDoService } from './services/to-do.service';
 import { Observable } from 'rxjs';
+import { ItemComponent } from './item/item.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, CommonModule, ItemComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -31,13 +32,12 @@ export class AppComponent implements OnInit {
     itemsObservable.subscribe(items => {
       this.allItems = items;
     });
-    // if (this.filter === "all") {
-    //   this.toDoService.getAllToDoItems();
-    //   return this.allItems;
-    // }
-    // return this.allItems.filter((item) =>
-    //   this.filter === "done" ? item.done : !item.done
-    // );
+  }
+
+  public filterItems(filterString: string) {
+    this.toDoService.getAllToDoItems(filterString).subscribe(newItemArr => {
+      this.allItems = newItemArr;
+    });
   }
 
   public addItem(description: string) {
@@ -47,10 +47,17 @@ export class AppComponent implements OnInit {
     this.toDoService.addItem(newItem).subscribe(res => {
       this.allItems.push(res);
     });
-  
-    // this.allItems.unshift({
-    //   description,
-    //   done: false
-    // });
+  }
+
+  public editItem(item: ToDoItem) {
+    this.toDoService.editItem(item).subscribe(newItemArr => {
+      this.allItems = newItemArr;
+    });
+  }
+
+  public deleteItem(item: ToDoItem) {
+    this.toDoService.deleteItem(item).subscribe(newItemArr => {
+      this.allItems = newItemArr;
+    });
   }
 }
